@@ -43,28 +43,34 @@ class LASER_SCAN:
         for index in range(0,deg-1,scanSkip):
             distance = ranges[index] 
             angle = index * angle_increment
-            if (distance < th_distance):
-                if index <= int((maxAngle/2))-int(((maxAngle/2))%scanSkip): ## right
-                    obsX = round(distance*math.cos(angle),4)
-                    obsY = round(distance*math.sin(angle),4)
-                    
-                    obs_row = np.array([obsX, obsY])
-                    obst = np.vstack((obst,obs_row))
-                elif index >= int(int((maxAngle/2)/scanSkip) + int(int(2*(maxAngle/2 % scanSkip)) + deg- maxAngle)/scanSkip)*scanSkip : ## left
-                    obsX = round(distance*math.cos(angle),4)
-                    obsY = round(distance*math.sin(angle),4)
-                    obs_row = np.array([obsX, obsY])
-                    obst = np.vstack((obst,obs_row))
+            if (distance < self.th_distance):
+                if (index%scanSkip ==0):
+                    if index <= int((maxAngle/2))-int(((maxAngle/2))%scanSkip): ## right
+                        obsX = round(distance*math.cos(angle),4)
+                        obsY = round(distance*math.sin(angle),4)
+                        obs_row = np.array([obsX, obsY])
+                        self.obst = np.vstack((self.obst,obs_row))
+
+                    elif index>= int(int((maxAngle/2)/scanSkip) + int(int(2*(maxAngle/2 % scanSkip)) + deg- maxAngle)/scanSkip)*scanSkip : ## left
+                        obsX = round(distance*math.cos(angle),4)
+                        obsY = round(distance*math.sin(angle),4)
+                        obs_row = np.array([obsX, obsY])
+                        self.obst = np.vstack((self.obst,obs_row))
+                    else:
+                        obsX = np.nan
+                        obsY = np.nan
+                        obs_row = np.array([obsX, obsY])
+                        self.obst = np.vstack((self.obst, obs_row))
                 else:
                     obsX = np.nan
                     obsY = np.nan
                     obs_row = np.array([obsX, obsY])
-                    obst = np.vstack((obst, obs_row))
+                    self.obst = np.vstack((self.obst, obs_row))
             else:
                 obsX = np.nan
                 obsY = np.nan
                 obs_row = np.array([obsX, obsY])
-                obst = np.vstack((obst, obs_row))
+                self.obst = np.vstack((self.obst, obs_row))
         discretized_ranges = np.round(np.hypot(obst[:,0],obst[:,1]),4)
         return discretized_ranges, obst
     
